@@ -1,0 +1,155 @@
+swagger: '2.0'
+info:
+  title: 'Ramp-up Task - API'
+  description: This schema contains the endpoints' definition related with the task microservice
+
+  version: 0.1.0
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /joiners/{joiner}/tasks:
+    get:
+      summary: Retrive a set of tasks assigned to a specific joiner
+      description: This enpoint will retrieve a set of tasks assigned to a specific joiner
+      parameters:
+        - in: path
+          name: joiner
+          description: joiner email
+          type: string
+          maxLength: 50
+          required: true
+      responses:
+        '200':
+          description: Board
+          schema:
+            $ref: '#/definitions/Board'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Result'
+  /tasks/{id}:
+      get:
+        summary: Retrive a task
+        description: This enpoint will retrieve task by its unique identifier
+        parameters:
+          - in: path
+            name: id
+            description: Task unique identifier
+            type: string
+            maxLength: 50
+            required: true
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/Task'
+          default:
+            description: Unexpected error
+            schema:
+              $ref: '#/definitions/Result'
+
+definitions:
+
+  Board:
+    description: List of tasks
+    type: array
+    items:
+      $ref: '#/definitions/Task'
+
+
+  Task:
+    description: Task Definition is a task template who defines an activity for a particular audience
+    type: object
+    properties:
+      id:
+        description: Task unique identifier
+        type: string
+        example:  "017c1919-4741-41bd-b15a-b99fd3109e6d"
+      name:
+        description: Task Definition Name
+        type: string
+        maxLength: 200
+        example: 'TASK 1'
+
+      priority:
+        description: describe the level of importance given to the task
+        enum:
+          - High
+          - Medium
+          - Low
+        example: 'High'
+
+      type:
+        description: Unique identifier of a list element who points to task-types
+        type: string
+        maxLength: 60
+        example: 'L'
+      stage:
+        description: Stage where the task is located
+        type: string
+        enum:
+          - TODO
+          - IN PROGRESS
+          - DONE
+        example: "TODO"
+
+      joiner:
+        description: Joner who own this task
+        type: string
+        example: "arincon"
+
+      description:
+        description: contains the details about the task
+        type: string
+        example: 'Just Do It'
+      files:
+        description: set of unique documents ids
+        type: array
+        items:
+          $ref: '#/definitions/Document'
+
+  Document:
+    type: object
+    properties:
+      doc-id:
+        description: unique identifier for a document
+        type: string
+        example: '5aea3961-a858-45ce-95cf-2b0f929dde93'
+      name:
+        description: file name
+        type: string
+        example: 'myFile.txt'
+  Result:
+    type: object
+    properties:
+      code:
+        type: string
+        enum:
+          - SUCCESS
+          - ERROR
+        example: 'SUCCESS'
+
+      error:
+        $ref: '#/definitions/Error'
+
+  Error:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - BUSINESS
+          - SERVICE
+          - EXTERNAL
+        example: 'SERVICE'
+
+      code:
+        description: Error code
+        type: string
+        example: '001'
+
+      message:
+        description: Error message
+        type: string
+        example: 'Database is not available'

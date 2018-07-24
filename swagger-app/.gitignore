@@ -1,0 +1,4 @@
+.swagger-codegen
+.swagger-codegen-ignore
+node_modules
+

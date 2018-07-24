@@ -1,0 +1,43 @@
+pipeline {
+  agent {label 'Slave06'}
+  environment {
+          AWS_DEFAULT_REGION = "us-east-1"
+          AWS_ID = credentials("$AWS_ACCOUNT_ID")
+          AWS_ACCESS_KEY_ID = "${env.AWS_ID_USR}"
+          AWS_SECRET_ACCESS_KEY = "${env.AWS_ID_PSW}"
+          AWS_ECR_ID = "329925270288"
+          GIT_REPO= "@bitbucket.endava.com/scm/erj/ramp-up-api-design.git"
+          BUILDN="${env.BUILD_NUMBER}"
+  }
+  stages {
+    stage('Prepare') {
+      steps {
+        echo 'Preparing'
+        checkout scm
+        sh 'mkdir -p cmt'
+        sh 'git rev-parse HEAD | head -c 11 > cmt/commitnumber.txt'
+        sh 'echo $BUILD_NUMBER > cmt/buildnumber.txt'
+        sh 'cat cmt/commitnumber.txt'
+      }
+    }
+    stage('Build') {
+      steps {
+        echo 'Building...'
+        sh 'cd ../ && docker rmi -f ruj-api-design && docker build -t ruj-api-design -f ./Swagger-deployer/Dockerfile . '
+        sh 'chmod u+x scripts/* && sh scripts/aws-ecr-login.sh && sh scripts/push-images.sh '
+      }
+    }
+    stage('Deploy') {
+      steps {
+        echo 'Deploying'
+        sh "rsync -avz -e 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' --progress * ec2-user@35.174.48.148:/home/ec2-user/swagger"
+        sh 'ssh -o StrictHostKeyChecking=no ec2-user@35.174.48.148 eval $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION --registry-ids $AWS_ECR_ID)'
+        sh 'ssh -o StrictHostKeyChecking=no ec2-user@35.174.48.148 chmod u+x swagger/scripts/*'
+        sh 'ssh -o StrictHostKeyChecking=no ec2-user@35.174.48.148 swagger/scripts/stop-containers.sh'
+        sh 'ssh -o StrictHostKeyChecking=no ec2-user@35.174.48.148 swagger/scripts/delete-images.sh'
+        sh 'ssh -o StrictHostKeyChecking=no ec2-user@35.174.48.148 eval $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION --registry-ids $AWS_ECR_ID)'
+        sh 'ssh -o StrictHostKeyChecking=no ec2-user@35.174.48.148 swagger/scripts/deploy-container.sh'
+      }
+    }
+  }
+}

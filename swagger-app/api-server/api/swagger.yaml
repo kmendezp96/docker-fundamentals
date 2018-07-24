@@ -1,0 +1,1022 @@
+---
+swagger: "2.0"
+info:
+  description: "API documentation of the different services available in the Ramp-Up\
+    \ Journal system"
+  version: "0.1.0"
+  title: "Ramp-up Journal - API"
+basePath: "/api"
+produces:
+- "application/json"
+paths:
+  /task-definitions/{id}:
+    get:
+      tags:
+      - "task definition"
+      summary: "Retrieve a specific task definition by the given id"
+      description: "This endpoint will retrieve a task-definition based on the id\
+        \ received by parameter"
+      operationId: "task_definitionsIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Task definition id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "task-definition details"
+          schema:
+            $ref: "#/definitions/TaskDefinition"
+        403:
+          description: "Forbidden, The request was not allowed because the client\
+            \ does not have the required credentials"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Task definition not found"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "TaskDefinition"
+    delete:
+      tags:
+      - "task definition"
+      summary: "Delete a specific task definition given its id"
+      operationId: "task_definitionsIdDELETE"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Task definition id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "The task definition was deleted successfully or doesn't exist"
+        500:
+          description: "Unexpected error, The task definition may not have been deleted"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "TaskDefinition"
+  /task-definitions:
+    get:
+      tags:
+      - "task definition"
+      summary: "Retrieve a list of tasks"
+      description: "This endpoint will retrieve a list of task-definitions"
+      operationId: "task_definitionsGET"
+      parameters: []
+      responses:
+        200:
+          description: "OK, Obtains the complete list of task definitions stored in\
+            \ the system"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TaskDefinition"
+        500:
+          description: "Unexpected system error, it wasn't able to retrieve the list\
+            \ of task definitions."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "TaskDefinition"
+    post:
+      tags:
+      - "task definition"
+      summary: "Create a new task definition"
+      description: "This endpoint shall be used to create a new task-definition"
+      operationId: "task_definitionsPOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Task Definition data"
+        required: true
+        schema:
+          $ref: "#/definitions/TaskDefinition"
+      responses:
+        201:
+          description: "The task definition was created successfully"
+          schema:
+            $ref: "#/definitions/Id"
+          headers:
+            Location:
+              type: "string"
+              description: "The URI or path of the created task definition."
+        400:
+          description: "Bad Request, The request body does not conform to a valid\
+            \ task definition."
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "There is a conflict with the name as there is another task\
+            \ definition using it."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected error, The task definition may not have been created."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "TaskDefinition"
+  /joiners/{email}:
+    get:
+      tags:
+      - "joiner"
+      summary: "Retrieve a joiner by its email"
+      description: "This endpoint shall be used to retrieve an existing joiner from\
+        \ the system using its email address"
+      operationId: "joinersEmailGET"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "Joiner email"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Ok, Reponses with the joiner details."
+          schema:
+            $ref: "#/definitions/Joiner"
+        400:
+          description: "Bad Request, The especified email doesn't has the expected\
+            \ form."
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden, The request was not allowed because the client\
+            \ does not have the required credentials."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found, There is not a joiner with the specified email\
+            \ address."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected system error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Joiner"
+    delete:
+      tags:
+      - "joiner"
+      summary: "Deletes a joiner"
+      description: "This endpoint allows to delete an existing joiner from the system\
+        \ especifying its email address."
+      operationId: "joinersEmailDELETE"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "Email address of the joiner that should be removed."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Ok, The joiner was deleted successfully or it doesn't exist."
+        400:
+          description: "Bad Request, The especified email doesn't has the expected\
+            \ form."
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden, The request was not allowed because the client\
+            \ does not have the required credentials."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected system error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Joiner"
+  /joiners:
+    get:
+      tags:
+      - "joiner"
+      summary: "Returns  all the joiners available in the system"
+      description: "This endpoint shall be used to retrieve the complete list of joiners\
+        \ registered in the the system"
+      operationId: "joinersGET"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "Ok, Reponses with the joiner details."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Joiner"
+        500:
+          description: "Unexpected system error it wasn't able to retrieve the list\
+            \ of joiners."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Joiner"
+    post:
+      tags:
+      - "joiner"
+      summary: "Create a joiner"
+      description: "This endpoint shall be used to create a new joiner in the system"
+      operationId: "joinersPOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Joiner"
+        required: true
+        schema:
+          $ref: "#/definitions/Joiner"
+      responses:
+        201:
+          description: "The joiner was created successfully"
+        400:
+          description: "Bad Request, The request body does not conform to a valid\
+            \ joiner."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected error, The joiner may not have been created."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Joiner"
+  /lists/:
+    get:
+      tags:
+      - "list"
+      summary: "Returns all the lists available in the system."
+      description: "This endpoint will retrieve an array containing all the lists\
+        \ available in the system"
+      operationId: "listsGET"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "OK, Responses with an object that contains all the available\
+            \ lists in the system"
+          schema:
+            type: "array"
+            example:
+            - name: "grade"
+              default:
+              - value: "SE"
+                text: "Senior Engineer"
+              items:
+              - value: "SE"
+                text: "Senior Engineer"
+              - value: "EN"
+                text: "Engineer"
+              - value: "CL"
+                text: "Consultant"
+            - name: "discipline"
+              default:
+              - value: "dev"
+                text: "Development"
+              items:
+              - value: "dev"
+                text: "Development"
+              - value: "test"
+                text: "Testing"
+              - value: "am"
+                text: "Application Management"
+            items:
+              $ref: "#/definitions/List"
+        500:
+          description: "Unexpected system error it wasn't able to retrieve the list\
+            \ of joiners."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "List"
+  /lists/{name}:
+    get:
+      tags:
+      - "list"
+      summary: "Returns a specific list."
+      description: "This endpoint will retrieve a list of values based on the name\
+        \ received by parameter"
+      operationId: "listsNameGET"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "The name of the list that is expexted to obtain"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Ok, Responses with a list object that contains the list items,\
+            \ and its default value."
+          schema:
+            $ref: "#/definitions/List"
+        403:
+          description: "Forbidden, The request was not allowed because the client\
+            \ does not have the required credentials."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found, There is not a list with the specified name."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected system error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "List"
+  /lists/{name}/default:
+    get:
+      tags:
+      - "list"
+      summary: "Returns the default value or item for a specific list."
+      description: "This endpoint will retrieve the default value of a list based\
+        \ on the list name and key received by path parameter and query parameter\
+        \ respectively. The default value of a list may depend of certain context,\
+        \ usually some user selections or actions. the `key` parameter should be used\
+        \ to describe this context to get the appropriated default value. If the `key`\
+        \ parameter is not specified the response would be the general default value\
+        \ of the list."
+      operationId: "listsNameDefaultGET"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "The name of the list that is expexted to obtain"
+        required: true
+        type: "string"
+      - name: "key"
+        in: "query"
+        description: "The key that determine the default value of the list. (Lists\
+          \ default value may depend on some user selections)"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Ok, Responses with a list object that contains the list items,\
+            \ and its default value."
+          schema:
+            $ref: "#/definitions/ListItem"
+        403:
+          description: "Forbidden, The request was not allowed because the client\
+            \ does not have the required credentials."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found, There is not a list with the specified name, or\
+            \ the list has not a default value for the specified key"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected system error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "List"
+  /rampups:
+    get:
+      tags:
+      - "ramp up"
+      summary: "Returns the complete list of active ramp-up processes"
+      description: "Returuns the complete list of ramp-up processes available in the\
+        \ system that are in CREATED state. If the owner parameter is  specified,\
+        \ The list will contain only the ones that belong to the specified owner."
+      operationId: "rampupsGET"
+      parameters:
+      - name: "owner"
+        in: "query"
+        description: "Ramp up process owner's Id (email), to filter the ramp up processes\
+          \ that belongs to the  specified owner."
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Returuns the complete list of ramp-up processes available\
+            \ in the system. If the owner parameter is  specified, The list we contain\
+            \ only the ones that belong to that owner."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/RampUp"
+        500:
+          description: "Unexpected error, It wasn't able to retrieve the list of ramp-up\
+            \ processes"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "RampUp"
+    post:
+      tags:
+      - "ramp up"
+      summary: "Creates a ramp up process for a joiner"
+      description: "This operation allows the creation of a new ramp-up process and\
+        \ associate it to a joiner"
+      operationId: "rampupsPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "RampUp object that contains the requiered information to create\
+          \ a ramp-up process"
+        required: true
+        schema:
+          $ref: "#/definitions/RampUp"
+      responses:
+        200:
+          description: "Ok, The ramp-up process was created successfully "
+          schema:
+            $ref: "#/definitions/Id"
+          headers:
+            Location:
+              type: "string"
+              description: "The URI or path of the created ramp-up."
+        400:
+          description: "Bad Request, The request body does not conform to a valid\
+            \ ramp-up object."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Unexpected error, The ramp-up may not have been created."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "RampUp"
+  /rampups/{id}/tasks:
+    post:
+      tags:
+      - "ramp up"
+      summary: "Adds a list of tasks to the ramp-up process"
+      description: "Allows to assign a list of tasks to the specified ramp up process"
+      operationId: "rampupsIdTasksPOST"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Ramp up process Id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "List of tasks that should be included in the ramp up process."
+        required: false
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Task"
+      responses:
+        200:
+          description: "Ok, the list of tasks were assigned successfully to the ramp-up\
+            \ process. Responses with the list of ids fo the assigned tasks."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Id"
+        400:
+          description: "Bad request, one or more of the items sent in the request\
+            \ do not conform to a valid task object."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not found,  There is not such a ramp-up process with the specified\
+            \ id to assign the collection of tasks "
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server error, something went wrong processing the request,\
+            \ the tasks could not be assigned."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "RampUp"
+  /rampups/{id}/status:
+    post:
+      tags:
+      - "ramp up"
+      summary: "Updates the status of a ramp-up process."
+      description: "Allows to change the status of the specified ramp-up process."
+      operationId: "rampupsIdStatusPOST"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Ramp up process Id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Object that contains the target status of the identified ramp-up\
+          \ processs."
+        required: true
+        schema:
+          $ref: "#/definitions/body"
+      responses:
+        200:
+          description: "Ok, The ramp-up process status was updated successfully. No\
+            \ content in the response body."
+        400:
+          description: "Bad request, The object in the body doesn't represent a valid\
+            \ status for a ramp-up process or the target status is not allowed bacause\
+            \ the current state of the ramp-up process."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not found,  There is not such a ramp-up process with the specified\
+            \ id."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server error, something went wrong processing the request,\
+            \ the status could not be changed."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "RampUp"
+  /rampups/{id}/tasks/{task-id}:
+    get:
+      tags:
+      - "ramp up"
+      summary: "Return the details of the specified task"
+      description: "Return an object with all the details of the task identified with\
+        \ the id sent in the path parameter. "
+      operationId: "rampupsIdTasksTask_idGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of the ramp-up process that has the desired task."
+        required: true
+        type: "string"
+      - name: "task-id"
+        in: "path"
+        description: "Id of the desired task"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Ok, Returns the details of the identified task."
+          schema:
+            $ref: "#/definitions/Task"
+        404:
+          description: "Not found,  Either the ramp-up process doesn't exist or the\
+            \ task doesn't exist or doesn't belong to the ramp-up process. "
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server Error, There was an error processing the request."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "RampUp"
+  /rampups/{id}/tasks/{task-id}/status:
+    post:
+      tags:
+      - "ramp up"
+      summary: "Updates the status of a ramp-up process."
+      description: "Allows to change the status of the specified ramp-up process."
+      operationId: "rampupsIdTasksTask_idStatusPOST"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Ramp up process Id"
+        required: true
+        type: "string"
+      - name: "task-id"
+        in: "path"
+        description: "Task Id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Object that contains the target status of the identified ramp-up\
+          \ task."
+        required: true
+        schema:
+          $ref: "#/definitions/body_1"
+      responses:
+        200:
+          description: "Ok, The task status was updated successfully. No content in\
+            \ the response body."
+        400:
+          description: "Bad request, The object in the body doesn't represent a valid\
+            \ status for a ramp-up task or the target status is not allowed bacause\
+            \ the current state of the task."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not found,  Either there is not such a ramp-up process with\
+            \ the specified id or not a task with the specified task-id within the\
+            \ ramp-up process."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server error, something went wrong processing the request,\
+            \ the status could not be changed."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "RampUp"
+definitions:
+  TaskDefinition:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "49a9b246-3b5a-4c73-a294-816b25a2ff6c"
+        description: "Task Definition id"
+        readOnly: true
+      name:
+        type: "string"
+        example: "Security Exam"
+        description: "Task Definition name"
+        maxLength: 100
+      priority:
+        type: "string"
+        example: "High"
+        description: "Indicates the level of importance of the defined task"
+        enum:
+        - "High"
+        - "Medium"
+        - "Low"
+      type:
+        type: "string"
+        example: "self-study"
+        description: "This field allows classifying the task definition in a specific\
+          \ group"
+        maxLength: 60
+      audience:
+        type: "array"
+        example:
+        - "GENERAL"
+        - "JAVA"
+        - "DEVELOPMENT"
+        description: "This field will contain list of values that allows to identify\
+          \ the group of people that are going to execute the task"
+        items:
+          type: "string"
+      approvedBy:
+        type: "string"
+        example: "buddy"
+        description: "This file indicates who is in charge of approving the task when\
+          \ it's completed"
+      description:
+        type: "string"
+        example: "Take the Endava security exam available here http://endava.com/security-exam"
+        description: "Contains the details about the task"
+      files:
+        type: "array"
+        description: "set of unique documents ids should be included as part of the\
+          \ task definition"
+        items:
+          $ref: "#/definitions/Document"
+    description: "Task Definition is a task template which describes an activity that\
+      \ needs to be done in a ramp-up process for a particular audience."
+    example:
+      audience:
+      - "GENERAL"
+      - "JAVA"
+      - "DEVELOPMENT"
+      name: "Security Exam"
+      approvedBy: "buddy"
+      description: "Take the Endava security exam available here http://endava.com/security-exam"
+      files:
+      - name: "myFile.txt"
+        link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+        doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      - name: "myFile.txt"
+        link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+        doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      id: "49a9b246-3b5a-4c73-a294-816b25a2ff6c"
+      priority: "High"
+      type: "self-study"
+  Joiner:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "joiner@endava.com"
+        description: "Joiner email"
+        maxLength: 50
+      firstName:
+        type: "string"
+        example: "Andres"
+        description: "Joiner first name"
+        maxLength: 50
+      lastName:
+        type: "string"
+        example: "Rincon"
+        description: "Joiner last name"
+        maxLength: 50
+      discipline:
+        type: "string"
+        example: "DEV"
+        description: "Indicates the discipline where the joiner belongs to."
+      grade:
+        type: "string"
+        example: "CL"
+        description: "Indicates the grade of the joiner"
+      role:
+        type: "string"
+        example: "Design Lead"
+        description: "Indicates the role of the joiner"
+      mainSkill:
+        type: "string"
+        example: "JAVA"
+        description: "Key of a skill list value"
+      buddy:
+        type: "string"
+        example: "arincon"
+        description: "Unique identifier for a endavian (username)"
+      lineManager:
+        type: "string"
+        example: "arincon"
+        description: "Unique identifier for a endavian (username)"
+      careerCoach:
+        type: "string"
+        example: "arincon"
+        description: "Unique identifier for a endavian (username)"
+    example:
+      firstName: "Andres"
+      lastName: "Rincon"
+      role: "Design Lead"
+      lineManager: "arincon"
+      mainSkill: "JAVA"
+      grade: "CL"
+      discipline: "DEV"
+      careerCoach: "arincon"
+      buddy: "arincon"
+      email: "joiner@endava.com"
+  List:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        example: "grade"
+        description: "Name of the lists"
+      default:
+        $ref: "#/definitions/ListItem"
+      items:
+        type: "array"
+        example:
+        - value: "SE"
+          text: "Senior Engineer"
+        - value: "EN"
+          text: "Engineer"
+        - value: "CL"
+          text: "Consultant"
+        items:
+          $ref: "#/definitions/ListItem"
+    example:
+      default:
+        text: "Senior Engineer"
+        value: "SE"
+      name: "grade"
+      items:
+      - value: "SE"
+        text: "Senior Engineer"
+      - value: "EN"
+        text: "Engineer"
+      - value: "CL"
+        text: "Consultant"
+  ListItem:
+    type: "object"
+    properties:
+      value:
+        type: "string"
+        example: "SE"
+        description: "Unique identifier for the value within the list"
+      text:
+        type: "string"
+        example: "Senior Engineer"
+        description: "item value"
+    example:
+      text: "Senior Engineer"
+      value: "SE"
+  RampUp:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        description: "Identifies the Ramp Up process represented by the entity"
+        readOnly: true
+      owner:
+        type: "string"
+        example: "owner@mail.com"
+        description: "Identifier (Email) of the ramp-up process owner"
+      state:
+        type: "string"
+        example: "CREATED"
+        description: "Indicates the state of the ramp-up process."
+        readOnly: true
+        enum:
+        - "CREATED"
+        - "STARTED"
+        - "CLOSED"
+      date:
+        type: "string"
+        example: "2012-04-23T18:25:43.511Z"
+        description: "Timestamp that indicates the creation date and time of the ramp-up\
+          \ process (UTC time zone & ISO 8601 format)"
+        readOnly: true
+      tasks:
+        type: "array"
+        description: "List of tasks associated with the ramp-up process."
+        items:
+          $ref: "#/definitions/Task"
+    example:
+      owner: "owner@mail.com"
+      date: "2012-04-23T18:25:43.511Z"
+      id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      state: "CREATED"
+      tasks:
+      - assignedBy: "juan.perez@endava.com"
+        audience:
+        - "GENERAL"
+        - "JAVA"
+        - "DEVELOPMENT"
+        name: "Endava presentation"
+        approvedBy: "juan.perez@endava.com"
+        description: "Read the PPT with the welcome to Endava information."
+        files:
+        - name: "myFile.txt"
+          link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+          doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        - name: "myFile.txt"
+          link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+          doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        assignee: "juan.perez@endava.com"
+        priority: "High"
+        type: "self-study"
+        taskDefinitionId: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        status: "IN-PROGRESS"
+      - assignedBy: "juan.perez@endava.com"
+        audience:
+        - "GENERAL"
+        - "JAVA"
+        - "DEVELOPMENT"
+        name: "Endava presentation"
+        approvedBy: "juan.perez@endava.com"
+        description: "Read the PPT with the welcome to Endava information."
+        files:
+        - name: "myFile.txt"
+          link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+          doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        - name: "myFile.txt"
+          link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+          doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        assignee: "juan.perez@endava.com"
+        priority: "High"
+        type: "self-study"
+        taskDefinitionId: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        status: "IN-PROGRESS"
+  Task:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        description: "Task code - uniquely identifies the task."
+        readOnly: true
+      name:
+        type: "string"
+        example: "Endava presentation"
+        description: "Task name"
+      description:
+        type: "string"
+        example: "Read the PPT with the welcome to Endava information."
+        description: "Task detailed description."
+      approvedBy:
+        type: "string"
+        example: "juan.perez@endava.com"
+        description: "User id of the person that should approve this task when completed."
+      assignedBy:
+        type: "string"
+        example: "juan.perez@endava.com"
+        description: "User id of the person that assigned this task. Usually the onboarding\
+          \ manager"
+      assignee:
+        type: "string"
+        example: "juan.perez@endava.com"
+        description: "User id of the person that should perform the task"
+      status:
+        type: "string"
+        example: "IN-PROGRESS"
+        description: "Indicates the current status of the task."
+        readOnly: true
+        enum:
+        - "TODO"
+        - "IN-PROGRESS"
+        - "DONE"
+      priority:
+        type: "string"
+        example: "High"
+        description: "Indicates the level of importance of the defined task"
+        enum:
+        - "High"
+        - "Medium"
+        - "Low"
+      type:
+        type: "string"
+        example: "self-study"
+        description: "This field allows classifying the task definition in a specific\
+          \ group"
+      audience:
+        type: "array"
+        example:
+        - "GENERAL"
+        - "JAVA"
+        - "DEVELOPMENT"
+        description: "This field will contain list of values that allows to identify\
+          \ the group of people that are going to execute the task"
+        items:
+          type: "string"
+      taskDefinitionId:
+        type: "string"
+        example: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        description: "A reference to the task definition that the task is based on."
+      files:
+        type: "array"
+        description: "set of unique documents ids should be included as part of the\
+          \ task definition"
+        items:
+          $ref: "#/definitions/Document"
+    example:
+      assignedBy: "juan.perez@endava.com"
+      audience:
+      - "GENERAL"
+      - "JAVA"
+      - "DEVELOPMENT"
+      name: "Endava presentation"
+      approvedBy: "juan.perez@endava.com"
+      description: "Read the PPT with the welcome to Endava information."
+      files:
+      - name: "myFile.txt"
+        link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+        doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      - name: "myFile.txt"
+        link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+        doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      assignee: "juan.perez@endava.com"
+      priority: "High"
+      type: "self-study"
+      taskDefinitionId: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+      status: "IN-PROGRESS"
+  Document:
+    type: "object"
+    properties:
+      doc-id:
+        type: "string"
+        example: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+        description: "unique identifier for a document"
+      name:
+        type: "string"
+        example: "myFile.txt"
+        description: "file name"
+      link:
+        type: "string"
+        example: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+        description: "URL to download the file"
+    example:
+      name: "myFile.txt"
+      link: "http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93"
+      doc-id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+  Id:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+    example:
+      id: "5aea3961-a858-45ce-95cf-2b0f929dde93"
+  Error:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        example: "HTTP error name"
+        description: "Name of the error"
+      detail:
+        type: "string"
+        example: "Error detailed description"
+        description: "Detailed description of the error"
+  body:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        example: "CLOSED"
+        description: "Indicates the desired/target status of the ramp-up process"
+        enum:
+        - "STARTED"
+        - "CLOSED"
+  body_1:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        example: "IN-PROGRESS"
+        description: "Indicates the desired/target status of the ramp-up task"
+        enum:
+        - "TODO"
+        - "IN-PROGRESS"
+        - "DONE"

@@ -1,0 +1,119 @@
+swagger: '2.0'
+info:
+  title: 'Ramp-up Document - API'
+  description: This schema contains the endpoints' definition related with the document microservice
+  version: 0.1.0
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /documents:
+    post:
+      summary: Create a new document
+      description: This endpoint shall be used to create a new document in the system
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: upfile
+          description: Upload a file
+          required: true
+          type: file
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Document'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Result'
+
+  /documents/{id}:
+    get:
+      summary: Retrieve a document from teh storage
+      description: This endpoint shall be used to retrieve a document given its unique identifier
+      parameters:
+        - in: path
+          name: id
+          description: document unique identifier
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+        default:
+          description: unexpected errors
+          schema:
+            $ref: '#/definitions/Result'
+
+    delete:
+      summary: Delete an existence document
+      description: This endpoint shall be used to delete a document from the system. if there is task who is referening to this document, a error message should be returned
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: document unique identifier
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Result'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Result'
+
+definitions:
+  Document:
+    type: object
+    properties:
+      doc-id:
+        description: unique identifier for a document
+        type: string
+        example: '5aea3961-a858-45ce-95cf-2b0f929dde93'
+      name:
+        description: file name
+        type: string
+        example: 'myFile.txt'
+  Result:
+    type: object
+    properties:
+      code:
+        type: string
+        enum:
+          - SUCCESS
+          - ERROR
+        example: 'SUCCESS'
+
+      error:
+        $ref: '#/definitions/Error'
+
+  Error:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - BUSINESS
+          - SERVICE
+          - EXTERNAL
+        example: 'SERVICE'
+
+      code:
+        description: Error code
+        type: string
+        example: '001'
+
+      message:
+        description: Error message
+        type: string
+        example: 'Database is not available'

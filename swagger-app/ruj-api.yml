@@ -1,0 +1,893 @@
+swagger: '2.0'
+info:
+  title: Ramp-up Journal - API
+  description: >-
+    API documentation of the different services available in the Ramp-Up Journal
+    system
+  version: 0.1.0
+basePath: /api
+produces:
+  - application/json
+paths:
+  '/task-definitions/{id}':
+    get:
+      summary: Retrieve a specific task definition by the given id
+      tags:
+        - task definition
+      description: >-
+        This endpoint will retrieve a task-definition based on the id received
+        by parameter
+      parameters:
+        - in: path
+          name: id
+          description: Task definition id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: task-definition details
+          schema:
+            $ref: '#/definitions/TaskDefinition'
+        '403':
+          description: >-
+            Forbidden, The request was not allowed because the client does not
+            have the required credentials
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Task definition not found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a specific task definition given its id
+      tags:
+        - task definition
+      parameters:
+        - in: path
+          name: id
+          type: string
+          description: Task definition id
+          required: true
+      responses:
+        '200':
+          description: The task definition was deleted successfully or doesn't exist
+        '500':
+          description: 'Unexpected error, The task definition may not have been deleted'
+          schema:
+            $ref: '#/definitions/Error'
+  /task-definitions:
+    post:
+      summary: Create a new task definition
+      tags:
+        - task definition
+      description: This endpoint shall be used to create a new task-definition
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Task Definition data
+          required: true
+          schema:
+            $ref: '#/definitions/TaskDefinition'
+      responses:
+        '201':
+          description: The task definition was created successfully
+          headers:
+            Location:
+              type: string
+              description: The URI or path of the created task definition.
+          schema:
+            $ref: '#/definitions/Id'
+        '400':
+          description: >-
+            Bad Request, The request body does not conform to a valid task
+            definition.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: >-
+            There is a conflict with the name as there is another task
+            definition using it.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Unexpected error, The task definition may not have been created.'
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Retrieve a list of tasks
+      tags:
+        - task definition
+      description: This endpoint will retrieve a list of task-definitions
+      responses:
+        '200':
+          description: >-
+            OK, Obtains the complete list of task definitions stored in the
+            system
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TaskDefinition'
+        '500':
+          description: >-
+            Unexpected system error, it wasn't able to retrieve the list of task
+            definitions.
+          schema:
+            $ref: '#/definitions/Error'
+  '/joiners/{email}':
+    get:
+      summary: Retrieve a joiner by its email
+      tags:
+        - joiner
+      description: >-
+        This endpoint shall be used to retrieve an existing joiner from the
+        system using its email address
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: email
+          description: Joiner email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Ok, Reponses with the joiner details.'
+          schema:
+            $ref: '#/definitions/Joiner'
+        '400':
+          description: 'Bad Request, The especified email doesn''t has the expected form.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: >-
+            Forbidden, The request was not allowed because the client does not
+            have the required credentials.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: 'Not Found, There is not a joiner with the specified email address.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected system error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Deletes a joiner
+      tags:
+        - joiner
+      description: >-
+        This endpoint allows to delete an existing joiner from the system
+        especifying its email address.
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: email
+          description: Email address of the joiner that should be removed.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Ok, The joiner was deleted successfully or it doesn''t exist.'
+        '400':
+          description: 'Bad Request, The especified email doesn''t has the expected form.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: >-
+            Forbidden, The request was not allowed because the client does not
+            have the required credentials.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected system error
+          schema:
+            $ref: '#/definitions/Error'
+  /joiners:
+    post:
+      summary: Create a joiner
+      tags:
+        - joiner
+      description: This endpoint shall be used to create a new joiner in the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Joiner
+          required: true
+          schema:
+            $ref: '#/definitions/Joiner'
+      responses:
+        '201':
+          description: The joiner was created successfully
+        '400':
+          description: 'Bad Request, The request body does not conform to a valid joiner.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Unexpected error, The joiner may not have been created.'
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Returns  all the joiners available in the system
+      tags:
+        - joiner
+      description: >-
+        This endpoint shall be used to retrieve the complete list of joiners
+        registered in the the system
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Ok, Reponses with the joiner details.'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Joiner'
+        '500':
+          description: >-
+            Unexpected system error it wasn't able to retrieve the list of
+            joiners.
+          schema:
+            $ref: '#/definitions/Error'
+  /lists/:
+    get:
+      summary: Returns all the lists available in the system.
+      tags:
+        - list
+      description: >-
+        This endpoint will retrieve an array containing all the lists available
+        in the system
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: >-
+            OK, Responses with an object that contains all the available lists
+            in the system
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/List'
+            example:
+              - name: grade
+                default:
+                  - value: SE
+                    text: Senior Engineer
+                items:
+                  - value: SE
+                    text: Senior Engineer
+                  - value: EN
+                    text: Engineer
+                  - value: CL
+                    text: Consultant
+              - name: discipline
+                default:
+                  - value: dev
+                    text: Development
+                items:
+                  - value: dev
+                    text: Development
+                  - value: test
+                    text: Testing
+                  - value: am
+                    text: Application Management
+        '500':
+          description: >-
+            Unexpected system error it wasn't able to retrieve the list of
+            joiners.
+          schema:
+            $ref: '#/definitions/Error'
+  '/lists/{name}':
+    get:
+      summary: Returns a specific list.
+      tags:
+        - list
+      description: >-
+        This endpoint will retrieve a list of values based on the name received
+        by parameter
+      parameters:
+        - in: path
+          name: name
+          description: The name of the list that is expexted to obtain
+          type: string
+          required: true
+      responses:
+        '200':
+          description: >-
+            Ok, Responses with a list object that contains the list items, and
+            its default value.
+          schema:
+            $ref: '#/definitions/List'
+        '403':
+          description: >-
+            Forbidden, The request was not allowed because the client does not
+            have the required credentials.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: 'Not Found, There is not a list with the specified name.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected system error
+          schema:
+            $ref: '#/definitions/Error'
+  '/lists/{name}/default':
+    get:
+      summary: Returns the default value or item for a specific list.
+      tags:
+        - list
+      description: >-
+        This endpoint will retrieve the default value of a list based on the
+        list name and key received by path parameter and query parameter
+        respectively. The default value of a list may depend of certain context,
+        usually some user selections or actions. the `key` parameter should be
+        used to describe this context to get the appropriated default value. If
+        the `key` parameter is not specified the response would be the general
+        default value of the list.
+      parameters:
+        - in: path
+          name: name
+          description: The name of the list that is expexted to obtain
+          type: string
+          required: true
+        - in: query
+          name: key
+          description: >-
+            The key that determine the default value of the list. (Lists default
+            value may depend on some user selections)
+          type: string
+          required: false
+      responses:
+        '200':
+          description: >-
+            Ok, Responses with a list object that contains the list items, and
+            its default value.
+          schema:
+            $ref: '#/definitions/ListItem'
+        '403':
+          description: >-
+            Forbidden, The request was not allowed because the client does not
+            have the required credentials.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: >-
+            Not Found, There is not a list with the specified name, or the list
+            has not a default value for the specified key
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected system error
+          schema:
+            $ref: '#/definitions/Error'
+  /rampups:
+    post:
+      summary: Creates a ramp up process for a joiner
+      tags:
+        - ramp up
+      description: >-
+        This operation allows the creation of a new ramp-up process and
+        associate it to a joiner
+      parameters:
+        - in: body
+          name: body
+          description: >-
+            RampUp object that contains the requiered information to create a
+            ramp-up process
+          required: true
+          schema:
+            $ref: '#/definitions/RampUp'
+      responses:
+        '200':
+          description: 'Ok, The ramp-up process was created successfully '
+          headers:
+            Location:
+              type: string
+              description: The URI or path of the created ramp-up.
+          schema:
+            $ref: '#/definitions/Id'
+        '400':
+          description: >-
+            Bad Request, The request body does not conform to a valid ramp-up
+            object.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Unexpected error, The ramp-up may not have been created.'
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Returns the complete list of active ramp-up processes
+      tags:
+        - ramp up
+      description: >-
+        Returuns the complete list of ramp-up processes available in the system that are in CREATED state.
+        If the owner parameter is  specified, The list will contain only the
+        ones that belong to the specified owner.
+      parameters:
+        - in: query
+          name: owner
+          description: >-
+            Ramp up process owner's Id (email), to filter the ramp up processes
+            that belongs to the  specified owner.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: >-
+            Returuns the complete list of ramp-up processes available in the
+            system. If the owner parameter is  specified, The list we contain
+            only the ones that belong to that owner.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RampUp'
+        '500':
+          description: >-
+            Unexpected error, It wasn't able to retrieve the list of ramp-up
+            processes
+          schema:
+            $ref: '#/definitions/Error'
+  '/rampups/{id}/tasks':
+    post:
+      summary: Adds a list of tasks to the ramp-up process
+      tags:
+        - ramp up
+      description: Allows to assign a list of tasks to the specified ramp up process
+      parameters:
+        - in: path
+          name: id
+          description: Ramp up process Id
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: List of tasks that should be included in the ramp up process.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Task'
+      responses:
+        '200':
+          description: >-
+            Ok, the list of tasks were assigned successfully to the ramp-up
+            process. Responses with the list of ids fo the assigned tasks.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Id'
+        '400':
+          description: >-
+            Bad request, one or more of the items sent in the request do not
+            conform to a valid task object.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: >-
+            Not found,  There is not such a ramp-up process with the specified id to assign the collection of tasks 
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: >-
+            Server error, something went wrong processing the request, the tasks
+            could not be assigned.
+          schema:
+            $ref: '#/definitions/Error'
+  '/rampups/{id}/status':
+    post:
+      summary: Updates the status of a ramp-up process.
+      tags:
+        - ramp up
+      description: Allows to change the status of the specified ramp-up process.
+      parameters:
+        - in: path
+          name: id
+          description: Ramp up process Id
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Object that contains the target status of the identified ramp-up processs.
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                description: Indicates the desired/target status of the ramp-up process
+                type: string
+                example: CLOSED
+                enum:
+                  - STARTED
+                  - CLOSED
+      responses:
+        '200':
+          description: >-
+            Ok, The ramp-up process status was updated successfully. No content in the response body.
+        '400':
+          description: >-
+            Bad request, The object in the body doesn't represent a valid status for a ramp-up process or the target status is not allowed bacause the current state of the ramp-up process.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: >-
+            Not found,  There is not such a ramp-up process with the specified id.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: >-
+            Server error, something went wrong processing the request, the status could not be changed.
+          schema:
+            $ref: '#/definitions/Error'
+  '/rampups/{id}/tasks/{task-id}':
+    get:
+      summary: Return the details of the specified task
+      description: >-
+        Return an object with all the details of the task identified with the id
+        sent in the path parameter. 
+      tags:
+        - ramp up
+      parameters:
+        - in: path
+          name: id
+          description: Id of the ramp-up process that has the desired task.
+          required: true
+          type: string
+        - in: path
+          name: task-id
+          description: Id of the desired task
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Ok, Returns the details of the identified task.'
+          schema:
+            $ref: '#/definitions/Task'
+        '404':
+          description: >-
+            Not found,  Either the ramp-up process doesn't exist or the task
+            doesn't exist or doesn't belong to the ramp-up process. 
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server Error, There was an error processing the request.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/rampups/{id}/tasks/{task-id}/status':
+    post:
+      summary: Updates the status of a ramp-up process.
+      tags:
+        - ramp up
+      description: Allows to change the status of the specified ramp-up process.
+      parameters:
+        - in: path
+          name: id
+          description: Ramp up process Id
+          required: true
+          type: string
+        - in: path
+          name: task-id
+          description: Task Id 
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Object that contains the target status of the identified ramp-up task.
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                description: Indicates the desired/target status of the ramp-up task
+                type: string
+                example: IN-PROGRESS
+                enum:
+                  - TODO
+                  - IN-PROGRESS
+                  - DONE
+      responses:
+        '200':
+          description: >-
+            Ok, The task status was updated successfully. No content in the response body.
+        '400':
+          description: >-
+            Bad request, The object in the body doesn't represent a valid status for a ramp-up task or the target status is not allowed bacause the current state of the task.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: >-
+            Not found,  Either there is not such a ramp-up process with the specified id or not a task with the specified task-id within the ramp-up process.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: >-
+            Server error, something went wrong processing the request, the status could not be changed.
+          schema:
+            $ref: '#/definitions/Error'  
+definitions:
+  TaskDefinition:
+    description: >-
+      Task Definition is a task template which describes an activity that needs
+      to be done in a ramp-up process for a particular audience.
+    type: object
+    properties:
+      id:
+        description: Task Definition id
+        type: string
+        readOnly: true
+        example: 49a9b246-3b5a-4c73-a294-816b25a2ff6c
+      name:
+        description: Task Definition name
+        type: string
+        maxLength: 100
+        example: Security Exam
+      priority:
+        description: Indicates the level of importance of the defined task
+        type: string
+        enum:
+          - High
+          - Medium
+          - Low
+        example: High
+      type:
+        description: This field allows classifying the task definition in a specific group
+        type: string
+        maxLength: 60
+        example: self-study
+      audience:
+        description: >-
+          This field will contain list of values that allows to identify the
+          group of people that are going to execute the task
+        type: array
+        items:
+          type: string
+        example:
+          - GENERAL
+          - JAVA
+          - DEVELOPMENT
+      approvedBy:
+        description: >-
+          This file indicates who is in charge of approving the task when it's
+          completed
+        type: string
+        example: buddy
+      description:
+        description: Contains the details about the task
+        type: string
+        example: >-
+          Take the Endava security exam available here
+          http://endava.com/security-exam
+      files:
+        description: >-
+          set of unique documents ids should be included as part of the task
+          definition
+        type: array
+        items:
+          $ref: '#/definitions/Document'
+  Joiner:
+    type: object
+    properties:
+      email:
+        description: Joiner email
+        type: string
+        maxLength: 50
+        example: joiner@endava.com
+      firstName:
+        description: Joiner first name
+        type: string
+        maxLength: 50
+        example: Andres
+      lastName:
+        description: Joiner last name
+        type: string
+        maxLength: 50
+        example: Rincon
+      discipline:
+        description: Indicates the discipline where the joiner belongs to.
+        type: string
+        example: DEV
+      grade:
+        description: Indicates the grade of the joiner
+        type: string
+        example: CL
+      role:
+        description: Indicates the role of the joiner
+        type: string
+        example: Design Lead
+      mainSkill:
+        description: Key of a skill list value
+        type: string
+        example: JAVA
+      buddy:
+        description: Unique identifier for a endavian (username)
+        type: string
+        example: arincon
+      lineManager:
+        description: Unique identifier for a endavian (username)
+        type: string
+        example: arincon
+      careerCoach:
+        description: Unique identifier for a endavian (username)
+        type: string
+        example: arincon
+  List:
+    type: object
+    properties:
+      name:
+        description: Name of the lists
+        type: string
+        example: grade
+      default:
+        $ref: '#/definitions/ListItem'
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/ListItem'
+        example:
+          - value: SE
+            text: Senior Engineer
+          - value: EN
+            text: Engineer
+          - value: CL
+            text: Consultant
+  ListItem:
+    type: object
+    properties:
+      value:
+        description: Unique identifier for the value within the list
+        type: string
+        example: SE
+      text:
+        description: item value
+        type: string
+        example: Senior Engineer
+  RampUp:
+    type: object
+    properties:
+      id:
+        description: Identifies the Ramp Up process represented by the entity
+        type: string
+        readOnly: true
+        example: 5aea3961-a858-45ce-95cf-2b0f929dde93
+      owner:
+        description: Identifier (Email) of the ramp-up process owner
+        type: string
+        example: owner@mail.com
+      state:
+        description: Indicates the state of the ramp-up process.
+        type: string
+        readOnly: true
+        example: CREATED
+        enum:
+          - CREATED
+          - STARTED
+          - CLOSED
+      date:
+        description: >-
+          Timestamp that indicates the creation date and time of the ramp-up process (UTC time zone & ISO 8601 format)
+        type: string
+        readOnly: true
+        example: "2012-04-23T18:25:43.511Z"
+      tasks:
+        description: List of tasks associated with the ramp-up process.
+        type: array
+        items:
+          $ref: '#/definitions/Task'
+  Task:
+    type: object
+    properties:
+      id:
+        description: Task code - uniquely identifies the task.
+        type: string
+        readOnly: true
+        example: 5aea3961-a858-45ce-95cf-2b0f929dde93
+      name:
+        description: Task name
+        type: string
+        example: Endava presentation
+      description:
+        description: Task detailed description.
+        type: string
+        example: Read the PPT with the welcome to Endava information.
+      approvedBy:
+        description: User id of the person that should approve this task when completed.
+        type: string
+        example: juan.perez@endava.com
+      assignedBy:
+        description: >-
+          User id of the person that assigned this task. Usually the onboarding
+          manager
+        type: string
+        example: juan.perez@endava.com
+      assignee:
+        description: User id of the person that should perform the task
+        type: string
+        example: juan.perez@endava.com
+      status:
+        description: Indicates the current status of the task.
+        type: string
+        readOnly: true
+        enum:
+          - TODO
+          - IN-PROGRESS
+          - DONE
+        example: IN-PROGRESS
+      priority:
+        description: Indicates the level of importance of the defined task
+        type: string
+        enum:
+          - High
+          - Medium
+          - Low
+        example: High
+      type:
+        description: This field allows classifying the task definition in a specific group
+        type: string
+        example: self-study
+      audience:
+        description: >-
+          This field will contain list of values that allows to identify the
+          group of people that are going to execute the task
+        type: array
+        items:
+          type: string
+        example:
+          - GENERAL
+          - JAVA
+          - DEVELOPMENT
+      taskDefinitionId:
+        description: A reference to the task definition that the task is based on.
+        type: string
+        example: 5aea3961-a858-45ce-95cf-2b0f929dde93
+      files:
+        description: >-
+          set of unique documents ids should be included as part of the task
+          definition
+        type: array
+        items:
+          $ref: '#/definitions/Document'
+  Document:
+    type: object
+    properties:
+      doc-id:
+        description: unique identifier for a document
+        type: string
+        example: 5aea3961-a858-45ce-95cf-2b0f929dde93
+      name:
+        description: file name
+        type: string
+        example: myFile.txt
+      link:
+        description: URL to download the file
+        type: string
+        example: 'http://documentserver/docs/5aea3961-a858-45ce-95cf-2b0f929dde93'
+  Id:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 5aea3961-a858-45ce-95cf-2b0f929dde93
+  Error:
+    type: object
+    properties:
+      name:
+        description: Name of the error
+        type: string
+        example: HTTP error name
+      detail:
+        description: Detailed description of the error
+        type: string
+        example: Error detailed description
