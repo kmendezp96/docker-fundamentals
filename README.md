@@ -2,7 +2,7 @@
 # Before you start
 - Install a console with SSH (I suggest Cmder or ConEmu)
 - Create an account in Dockerhub https://hub.docker.com/ 
-- Disable turn off hyper-v feature on (Windows features) and restart your pc.
+- Disable or turn off hyper-v feature on (Windows features) and restart your pc.
 - Install Vagrant from https://www.vagrantup.com/ following https://www.vagrantup.com/docs/installation/
 - Install VirtualBox from https://www.virtualbox.org/ 
 - Clone the following git repository https://github.com/manherfo/docker-fundamentals.git
