@@ -1,5 +1,6 @@
 # Docker-fundamentals
 # Before you start
+- Install a console with SSH (I suggest Cmder or ConEmu)
 - Create an account in Dockerhub https://hub.docker.com/ 
 - Disable turn off hyper-v feature on (Windows features) and restart your pc.
 - Install Vagrant from https://www.vagrantup.com/ following https://www.vagrantup.com/docs/installation/
