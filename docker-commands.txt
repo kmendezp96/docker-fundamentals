@@ -1,0 +1,32 @@
+######################################################################################################
+docker commands
+######################################################################################################
+
+docker images
+docker image inspect
+docker ps
+dokcer ps -a
+docker top container
+docker rmi $IMAGENAME
+docker rm $CONTAINERNAME
+docker run -p$HOST-PORT:$CONTAINER-PORT -f$PATH-TO-FILE -d/-it $IMAGE $ALTERNATIVE-COMMAND-TO-EXECUTE 
+docker logs $CONTAINER
+docker stop $CONTAINER
+docker start $CONTAINER
+docker commit $CONTAINER $REPOSITORY:$TAG
+docker tag $SOURCE-IMAGE:$TAG $TARGET-IMAGE:$TAG
+docker login
+docker push $NAME:$TAG
+docker pull $NAME:$TAG
+
+######################################################################################################
+docker-compose commands
+######################################################################################################
+
+docker-compose up 
+docker-compose up -d
+docker-compose -f $PATH-TO-FILE up
+docker-compose down
+docker-compose stop
+docker-compose kill
+docker-compose top
